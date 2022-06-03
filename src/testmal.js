@@ -3,7 +3,9 @@
 let apiData = [];
 let tickers = [];
 
-tickers = JSON.parse(localStorage.getItem("Tickers")).tickers;
+if (localStorage.getItem("Tickers") !== null) {
+  tickers = JSON.parse(localStorage.getItem("Tickers")).tickers;
+}
 // let apiData2 = [];
 // let ohlc = [];
 // let volume = [];
@@ -112,44 +114,44 @@ let options = {
   },
   series: [],
 };
+if (localStorage.getItem("Tickers") !== null) {
+  for (let ticker of tickers) {
+    let apiData = [];
+    let apiValue = [];
 
-for (let ticker of tickers) {
-  let apiData = [];
-  let apiValue = [];
+    apiData.push(JSON.parse(localStorage.getItem(ticker.toString())));
 
-  apiData.push(JSON.parse(localStorage.getItem(ticker.toString())));
-
-  apiValue = formatData(apiData[0].values);
-  console.log(ticker);
-  console.log(apiValue[1]);
-  options.series.push({
-    type: "ohlc",
-    name: ticker,
-    data: apiValue.ohlc,
-    dataGrouping: [
-      [
-        "week", // unit name
-        [1], // allowed multiples
+    apiValue = formatData(apiData[0].values);
+    console.log(ticker);
+    console.log(apiValue[1]);
+    options.series.push({
+      type: "ohlc",
+      name: ticker,
+      data: apiValue.ohlc,
+      dataGrouping: [
+        [
+          "week", // unit name
+          [1], // allowed multiples
+        ],
+        ["month", [1, 2, 3, 4, 6]],
       ],
-      ["month", [1, 2, 3, 4, 6]],
-    ],
-  });
+    });
 
-  options.series.push({
-    type: "column",
-    linkedTo: ":previous",
-    data: apiValue.volume,
-    yAxis: 1,
-    dataGrouping: [
-      [
-        "week", // unit name
-        [1], // allowed multiples
+    options.series.push({
+      type: "column",
+      linkedTo: ":previous",
+      data: apiValue.volume,
+      yAxis: 1,
+      dataGrouping: [
+        [
+          "week", // unit name
+          [1], // allowed multiples
+        ],
+        ["month", [1, 2, 3, 4, 6]],
       ],
-      ["month", [1, 2, 3, 4, 6]],
-    ],
-  });
+    });
+  }
 }
-
 function formatData(data) {
   let ohlc = [];
   let volume = [];
