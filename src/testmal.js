@@ -2,47 +2,46 @@
 
 let apiData = [];
 let tickers = [];
-let apiData2 = [];
 
-if (localStorage.getItem("Tickers") !== null) {
-  tickers = JSON.parse(localStorage.getItem("Tickers")).tickers;
+tickers = JSON.parse(localStorage.getItem("Tickers")).tickers;
+// let apiData2 = [];
+// let ohlc = [];
+// let volume = [];
+// let groupingUnits = [
+//   [
+//     "week", // unit name
+//     [1], // allowed multiples
+//   ],
+//   ["month", [1, 2, 3, 4, 6]],
+// ];
 
-  for (let ticker of tickers) {
-    apiData2.push(JSON.parse(localStorage.getItem(ticker.toString())));
-  }
+// if (localStorage.getItem("Tickers") !== null) {
+//   tickers = JSON.parse(localStorage.getItem("Tickers")).tickers;
 
-  apiData = JSON.parse(localStorage.getItem("AAPL:NASDAQ"));
-  apiData.values.reverse();
-}
+//   for (let ticker of tickers) {
+//     apiData2.push(JSON.parse(localStorage.getItem(ticker.toString())));
+//   }
 
-let ohlc = [];
-let volume = [];
-let groupingUnits = [
-  [
-    "week", // unit name
-    [1], // allowed multiples
-  ],
-  ["month", [1, 2, 3, 4, 6]],
-];
+//   apiData = JSON.parse(localStorage.getItem("AAPL:NASDAQ"));
+//   apiData.values.reverse();
 
-for (let inData of apiData.values) {
-  ohlc.push([
-    new Date(inData.datetime).getTime(), // the date
-    parseFloat(inData.open), // open
-    parseFloat(inData.high), // high
-    parseFloat(inData.low), // low
-    parseFloat(inData.close), // close
-  ]);
+//   for (let inData of apiData.values) {
+//     ohlc.push([
+//       new Date(inData.datetime).getTime(), // the date
+//       parseFloat(inData.open), // open
+//       parseFloat(inData.high), // high
+//       parseFloat(inData.low), // low
+//       parseFloat(inData.close), // close
+//     ]);
 
-  volume.push([
-    new Date(inData.datetime).getTime(), // the date
-    parseFloat(inData.volume), // the volume
-  ]);
-}
-console.log(ohlc[0]);
-console.log(volume);
+//     volume.push([
+//       new Date(inData.datetime).getTime(), // the date
+//       parseFloat(inData.volume), // the volume
+//     ]);
+//   }
+// }
 
-const options = {
+let options = {
   rangeSelector: {
     labelStyle: {
       display: "none",
@@ -111,26 +110,71 @@ const options = {
   tooltip: {
     split: true,
   },
-  series: [
-    {
-      type: "ohlc",
-      name: "AAPL",
-      data: ohlc,
-      dataGrouping: {
-        units: groupingUnits,
-      },
-      legendItemClick: {},
-    },
-    {
-      type: "column",
-      linkedTo: ":previous",
-      data: volume,
-      yAxis: 1,
-      dataGrouping: {
-        units: groupingUnits,
-      },
-    },
-  ],
+  series: [],
 };
+
+for (let ticker of tickers) {
+  let apiData = [];
+  let apiValue = [];
+
+  apiData.push(JSON.parse(localStorage.getItem(ticker.toString())));
+
+  apiValue = formatData(apiData[0].values);
+  console.log(ticker);
+  console.log(apiValue[1]);
+  options.series.push({
+    type: "ohlc",
+    name: ticker,
+    data: apiValue.ohlc,
+    dataGrouping: [
+      [
+        "week", // unit name
+        [1], // allowed multiples
+      ],
+      ["month", [1, 2, 3, 4, 6]],
+    ],
+  });
+
+  options.series.push({
+    type: "column",
+    linkedTo: ":previous",
+    data: apiValue.volume,
+    yAxis: 1,
+    dataGrouping: [
+      [
+        "week", // unit name
+        [1], // allowed multiples
+      ],
+      ["month", [1, 2, 3, 4, 6]],
+    ],
+  });
+}
+
+function formatData(data) {
+  let ohlc = [];
+  let volume = [];
+
+  console.log(data);
+  data.reverse();
+
+  for (let inData of data) {
+    ohlc.push([
+      new Date(inData.datetime).getTime(), // the date
+      parseFloat(inData.open), // open
+      parseFloat(inData.high), // high
+      parseFloat(inData.low), // low
+      parseFloat(inData.close), // close
+    ]);
+
+    volume.push([
+      new Date(inData.datetime).getTime(), // the date
+      parseFloat(inData.volume), // the volume
+    ]);
+  }
+  return {
+    ohlc: ohlc,
+    volume: volume,
+  };
+}
 
 export default options;

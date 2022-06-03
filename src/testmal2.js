@@ -1,193 +1,161 @@
-import { useState } from "react";
+// import { useState } from "react";
 
-// https://codesandbox.io/s/highcharts-react-demo-forked-jwgojn?file=/demo.jsx
-const [selectedValues, setSelectedValues] = useState([]);
+// // https://codesandbox.io/s/highcharts-react-demo-forked-jwgojn?file=/demo.jsx
 
-let apiData = [];
+// const testmal2 = () => {
+//   const [selectedValues, setSelectedValues] = useState([]);
 
-function formatData(data) {
-  let ohlc = [];
-  let volume = [];
-  let apiData = {};
-  data.values.reverse();
+//   let apiData = [];
 
-  for (let inData of data.values) {
-    ohlc.push([
-      new Date(inData.datetime).getTime(), // the date
-      parseFloat(inData.open), // open
-      parseFloat(inData.high), // high
-      parseFloat(inData.low), // low
-      parseFloat(inData.close), // close
-    ]);
+//   function formatData(data) {
+//     let ohlc = [];
+//     let volume = [];
 
-    volume.push([
-      new Date(inData.datetime).getTime(), // the date
-      parseFloat(inData.volume), // the volume
-    ]);
-  }
-  apiData.
-  return apiData{[ohlc],[volume]};
-}
+//     data.values.reverse();
 
-const series = (selectedValues) => {
-  let series = [];
-  let tickers = [];
+//     for (let inData of data.values) {
+//       ohlc.push([
+//         new Date(inData.datetime).getTime(), // the date
+//         parseFloat(inData.open), // open
+//         parseFloat(inData.high), // high
+//         parseFloat(inData.low), // low
+//         parseFloat(inData.close), // close
+//       ]);
 
-  tickers = JSON.parse(localStorage.getItem("Tickers")).tickers;
-  for (let ticker of tickers) {
-    let apiData = [];
+//       volume.push([
+//         new Date(inData.datetime).getTime(), // the date
+//         parseFloat(inData.volume), // the volume
+//       ]);
+//     }
+//     apiData.return[(ohlc, volume)];
+//   }
 
-    apiData.push(JSON.parse(localStorage.getItem(ticker.toString())));
+//   const series = () => {
+//     let series = [];
+//     let tickers = [];
 
-    apiData = formatData(apiData).;
+//     tickers = JSON.parse(localStorage.getItem("Tickers")).tickers;
+//     for (let ticker of tickers) {
+//       let apiData = [];
+//       let apiValue = [];
 
-    series.push({
-      type: "line",
-      name: selectedValues[i].label,
-      data: apiData.ohlc,
-    });
-    series.push({
-      type: "line",
-      name: selectedValues[i].label,
-      data: i,
-    });
-  }
+//       apiData.push(JSON.parse(localStorage.getItem(ticker.toString())));
 
-  return series;
-};
+//       apiValue = formatData(apiData);
 
-const [options, setOptions] = useState({
-  chart: {
-    height: selectedValues.length * 100 + 100,
-  },
-  credits: {
-    enabled: false,
-  },
+//       series.push({
+//         type: "ohlc",
+//         name: apiData.meta.name,
+//         data: apiValue[0],
+//         dataGrouping: [
+//           [
+//             "week", // unit name
+//             [1], // allowed multiples
+//           ],
+//           ["month", [1, 2, 3, 4, 6]],
+//         ],
+//       });
 
-  legend: {
-    enabled: true,
-  },
-  title: {
-    text: "Series",
-  },
-  rangeSelector: {
-    selected: 0,
-    buttons: [],
-    inputEnabled: false,
-  },
-  tooltip: {
-    split: true,
-  },
-  series: series(selectedValues),
-  yAxis: yAxis(selectedValues),
-});
+//       series.push({
+//         type: "column",
+//         linkedTo: ":previous",
+//         data: apiValue[1],
+//         yAxis: 1,
+//         dataGrouping: [
+//           [
+//             "week", // unit name
+//             [1], // allowed multiples
+//           ],
+//           ["month", [1, 2, 3, 4, 6]],
+//         ],
+//       });
+//     }
 
-const addNewSeries = () => {
-  let newSelectedValues = selectedValues;
-  let id = newSelectedValues.length;
+//     return series;
+//   };
 
-  newSelectedValues.push({ value: id, label: `Series ${id}` });
+//   const [options, setOptions] = useState();
 
-  setSelectedValues(newSelectedValues);
-  console.log(selectedValues);
+//   const addNewSeries = () => {
+//     let newSelectedValues = selectedValues;
+//     let id = newSelectedValues.length;
 
-  setOptions({
-    rangeSelector: {
-      labelStyle: {
-        display: "none",
-      },
-      selected: 0,
-      buttons: [
-        {
-          type: "year",
-          count: 1,
-          text: "1Y",
-          title: "View 1 year",
-        },
-        {
-          type: "year",
-          count: 5,
-          text: "5Y",
-          title: "View 5 year",
-        },
-        {
-          type: "max",
-          text: "MAX",
-          title: "View all",
-        },
-      ],
-    },
+//     newSelectedValues.push({ value: id, label: `Series ${id}` });
 
-    title: {
-      text: "Stocks",
-    },
-    legend: {
-      enabled: true,
-    },
-    credits: {
-      enabled: false,
-    },
-    yAxis: [
-      {
-        type: "datetime",
-        labels: {
-          align: "right",
-          x: -3,
-        },
-        title: {
-          text: "OHLC",
-        },
-        height: "60%",
-        lineWidth: 2,
-        resize: {
-          enabled: true,
-        },
-      },
-      {
-        labels: {
-          align: "right",
-          x: -3,
-        },
-        title: {
-          text: "Volume",
-        },
-        top: "65%",
-        height: "35%",
-        offset: 0,
-        lineWidth: 2,
-      },
-    ],
-    tooltip: {
-      split: true,
-    },
-    series: [
-      {
-        type: "ohlc",
-        name: "AAPL",
-        data: ohlc,
-        dataGrouping: [
-          [
-            "week", // unit name
-            [1], // allowed multiples
-          ],
-          ["month", [1, 2, 3, 4, 6]],
-        ],
-      },
-      {
-        type: "column",
-        linkedTo: ":previous",
-        data: volume,
-        yAxis: 1,
-        dataGrouping: [
-          [
-            "week", // unit name
-            [1], // allowed multiples
-          ],
-          ["month", [1, 2, 3, 4, 6]],
-        ],
-      },
-    ],
-  });
-};
+//     setSelectedValues(newSelectedValues);
+//     console.log(selectedValues);
 
-export default options;
+//     setOptions({
+//       rangeSelector: {
+//         labelStyle: {
+//           display: "none",
+//         },
+//         selected: 0,
+//         buttons: [
+//           {
+//             type: "year",
+//             count: 1,
+//             text: "1Y",
+//             title: "View 1 year",
+//           },
+//           {
+//             type: "year",
+//             count: 5,
+//             text: "5Y",
+//             title: "View 5 year",
+//           },
+//           {
+//             type: "max",
+//             text: "MAX",
+//             title: "View all",
+//           },
+//         ],
+//       },
+
+//       title: {
+//         text: "Stocks",
+//       },
+//       legend: {
+//         enabled: true,
+//       },
+//       credits: {
+//         enabled: false,
+//       },
+//       yAxis: [
+//         {
+//           type: "datetime",
+//           labels: {
+//             align: "right",
+//             x: -3,
+//           },
+//           title: {
+//             text: "OHLC",
+//           },
+//           height: "60%",
+//           lineWidth: 2,
+//           resize: {
+//             enabled: true,
+//           },
+//         },
+//         {
+//           labels: {
+//             align: "right",
+//             x: -3,
+//           },
+//           title: {
+//             text: "Volume",
+//           },
+//           top: "65%",
+//           height: "35%",
+//           offset: 0,
+//           lineWidth: 2,
+//         },
+//       ],
+//       tooltip: {
+//         split: true,
+//       },
+//       series: [],
+//     });
+//   };
+// };
+// export default testmal2;
